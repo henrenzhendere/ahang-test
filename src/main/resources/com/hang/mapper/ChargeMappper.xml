@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<!--sql映射文件-->
+<!--名称空间-->
+<mapper namespace="com.hang.mapper.ChargeMapper">
+    <resultMap id="ChargeMap" type="com.hang.pojo.Charge">
+        <result column="charge_id" property="chargeId"/>
+        <result column="create_time" property="createTime"/>
+        <result column="user_id" property="userId"/>
+        <result column="finish_time" property="finishTime"/>
+    </resultMap>
+    <insert id="insertChargeInfo" parameterType="charge">
+        insert into charge (charge,total,create_time,user_id,chargeNo)
+        values(#{charge},#{total},#{createTime},#{userId},#{chargeNo});
+
+    </insert>
+    <update id="updateFinishTime" parameterType="com.hang.pojo.Charge">
+        update charge set finish_time = #{finishTime} , total = #{total} where chargeNo = #{chargeNo}
+    </update>
+
+    <update id="updateVersionInt" parameterType="user">
+        update user set money = #{total}
+        where user_id = #{userId}
+    </update>
+
+    <update id="updateStatus">
+        update charge set status = 2 where chargeNo = #{chargeNo}
+    </update>
+
+    <delete id="delChargeInfo">
+        delete from charge where charge_no = #{chargeNo}
+    </delete>
+    <select id="chargeInfo" resultMap="ChargeMap">
+        select *
+        from charge
+        where user_id = #{userId}
+    </select>
+
+    <select id="queryPresentCharge" resultType="User">
+        select *
+        from user
+        where user_id = #{userId}
+    </select>
+    <select id="queryVersion" resultType="com.hang.pojo.Charge">
+        select *
+        from charge
+        where chargeNo = #{chargeNo}
+    </select>
+    <select id="queryVersionAndMoney" resultType="com.hang.pojo.User">
+        select *
+        from user
+        where chargeNo = #{chargeNo}
+    </select>
+    <select id="queryUserId" resultType="java.lang.Integer">
+        select user_id
+        from charge
+        where chargeNo = #{chargeNo}
+    </select>
+    <select id="preChargeInfo" resultType="com.hang.pojo.Charge">
+        select *
+        from charge
+        where chargeNo = #{chargeNo}
+    </select>
+</mapper>

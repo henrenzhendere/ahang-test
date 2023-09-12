@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--sql映射文件-->
+<!--名称空间-->
+<mapper namespace="com.hang.mapper.OrderMapper">
+
+
+    <resultMap id="goodResultMap" type="good">
+        <result column="goods_no" property="goodNo"/>
+        <result column="goods_name" property="goodName"/>
+    </resultMap>
+
+    <resultMap id="addrResultMap" type="address">
+        <result column="user_id" property="userId"/>
+        <result column="addr_id" property="addrId"/>
+    </resultMap>
+
+    <resultMap id="orderListMap" type="order">
+        <result column="user_id" property="userId"/>
+    </resultMap>
+
+    <resultMap id="statusResultMap" type="Order">
+        <result column="user_name" property="userName"/>
+        <result column="user_id" property="userId"/>
+        <result column="order_id" property="orderId"/>
+        <result column="order_no" property="orderNo"/>
+        <result column="addr_msg" property="addrMsg"/>
+        <result column="create_time" property="createTime"/>
+        <result column="pay_time" property="payTime"/>
+        <result column="total_price" property="totalPrice"/>
+        <result column="pay_method" property="payMethod"/>
+    </resultMap>
+
+    <insert id="insertOrder1">
+        insert into order1 (order_no,user_id,addr_msg,status,logistics_no,total_price,pay_method)
+        values(#{orderNo},#{userId},#{addrMsg},#{status},#{logisticsNo},#{totalPrice},#{payMethod});
+    </insert>
+
+    <update id="updateOrderStatus">
+        update order1 set status = 6 , pay_time = #{payTime} where order_no = #{outTradeNo}
+    </update>
+
+
+    <select id="orderToPay" resultMap="addrResultMap">
+
+        SELECT *
+        from address
+        where user_id = #{userId}
+    </select>
+
+    <select id="goodToPay" resultMap="goodResultMap">
+        select *
+        from goods
+        where goods_no = #{goodNo}
+    </select>
+    <select id="queryAllOrder" resultMap="statusResultMap">
+        select *
+        from order1
+        where user_id = #{userId}
+    </select>
+</mapper>

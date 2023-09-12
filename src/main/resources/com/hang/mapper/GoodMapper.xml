@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<!--sql映射文件-->
+<!--名称空间-->
+<mapper namespace="com.hang.mapper.GoodMapper">
+
+    <resultMap id="goodResultMap" type="good">
+        <result column="goods_no" property="goodNo"/>
+        <result column="goods_name" property="goodName"/>
+    </resultMap>
+
+
+    <!--
+    查询全部商品信息
+    -->
+    <select id="selectAllGoods" resultMap="goodResultMap">
+        select *
+        from goods
+        limit #{begin},#{pageSize}
+    </select>
+
+    <!--
+    查询 商品数量用于分页
+    -->
+    <select id="queryCount" resultType="java.lang.Integer">
+        select count(*) from goods
+    </select>
+
+    <!--
+    商品详情页
+    -->
+    <select id="showGoodDetail" resultMap="goodResultMap">
+        select * from goods where goods_no = #{goodNo}
+    </select>
+
+    <select id="queryPrice"  resultType="decimal">
+        select price
+        from goods where goods_no=#{goodNo}
+    </select>
+
+    <!--查询购物车-->
+    <select id="shopCarGood" resultMap="goodResultMap">
+        select * from goods
+        where goods_no = #{goodNo}
+    </select>
+    <select id="queryStock" resultType="java.lang.Integer">
+        select stock
+        from goods
+        where goods_no = #{goodNo}
+    </select>
+    <!--    扣库存-->
+    <update id="updateStock" >
+        update goods set  stock = stock - #{num} where goods_no = #{goodNo} and stock >  #{num}
+    </update>
+
+    <!--
+        sql片段
+    -->
+    <!--    <sql id="emp_column">-->
+    <!--        empno, ename, job, mgr, hiredate, sal, COMM, deptno-->
+    <!--    </sql>-->
+    <!--    <select id="selectAll" resultType="emp">-->
+    <!--       <include refid="emp_column"></include>-->
+    <!--    </select>-->
+
+
+    <!--    <select id="selectAll" resultType="emp">-->
+    <!--      select * from emp-->
+    <!--    </select>-->
+
+    <!--
+           * 参数占位符
+           1.#{}:会将其替换为 ？  为了防止sql注入
+           2.${}:拼sql，会存在sql注入问题
+           3. 使用实机：
+                * 参数传递的时候都用#{}
+
+            * 特殊字符处理
+                1.转义字符：&lt; = <
+                2.CDATA区：
+    -->
+<!--    <select id="selectById" resultMap="empResultMap">-->
+<!--        select *-->
+<!--        from emp-->
+<!--        where empno = #{empNo}-->
+<!--    </select>-->
+    <!--
+           条件查询
+    -->
+    <!--    <select id="selectByCondition" resultMap="empResultMap">-->
+    <!--        select * from emp-->
+    <!--        where job = #{job}-->
+    <!--          and ename like  #{ename}-->
+    <!--    </select>-->
+    <!--
+          * 动态条件查询
+              * if:条件判断
+                   * test：逻辑表达式
+              * 问题： * 恒等式
+                      *  <where>标签替换where关键字
+                   *
+    -->
+<!--    <select id="selectByCondition" resultMap="empResultMap">-->
+<!--        select * from emp-->
+<!--        # where 1 = 1-->
+<!--        <where>-->
+<!--            <if test="job!=null">-->
+<!--                and job = #{job}-->
+<!--            </if>-->
+<!--            <if test="ename!=null and ename!='' ">-->
+<!--                and ename like #{ename}-->
+<!--            </if>-->
+
+<!--        </where>-->
+<!--    </select>-->
+    <!--    <select id="selectByConditionSingle" resultMap="empResultMap">-->
+    <!--        select *-->
+    <!--        from  emp-->
+    <!--        where-->
+    <!--            <choose>&lt;!&ndash;相当于switch&ndash;&gt;-->
+    <!--                <when test="job!=null and job!=''">&lt;!&ndash;相当于case&ndash;&gt;-->
+    <!--                    job = #{job}-->
+    <!--                </when>-->
+    <!--                <when test="ename!=null and ename!=''">&lt;!&ndash;相当于case&ndash;&gt;-->
+    <!--                     ename like  #{ename}-->
+    <!--                </when>-->
+    <!--                <otherwise>-->
+    <!--                    1=1-->
+    <!--                </otherwise>-->
+    <!--            </choose>-->
+    <!--    </select>-->
+
+<!--    <select id="selectByConditionSingle" resultMap="empResultMap">-->
+<!--        select *-->
+<!--        from emp-->
+<!--        <where>-->
+<!--            <choose>&lt;!&ndash;相当于switch&ndash;&gt;-->
+<!--                <when test="job!=null and job!=''">&lt;!&ndash;相当于case&ndash;&gt;-->
+<!--                    job = #{job}-->
+<!--                </when>-->
+<!--                <when test="ename!=null and ename!='' ">&lt;!&ndash;相当于case&ndash;&gt;-->
+<!--                    ename like #{ename}-->
+<!--                </when>-->
+<!--                <otherwise>-->
+<!--                    1=1-->
+<!--                </otherwise>-->
+<!--            </choose>-->
+<!--        </where>-->
+<!--    </select>-->
+
+    <!--
+            useGeneratedKeys设置为 true 时，表示如果插入的表id以自增列为主键，
+            则允许 JDBC 支持自动生成主键，并可将自动生成的主键id返回。
+            useGeneratedKeys参数只针对 insert 语句生效，默认为 false；
+    -->
+<!--    <insert id="add" useGeneratedKeys="true" keyProperty="empno">-->
+<!--        insert into emp(empno,ename,job,mgr,hiredate,sal,COMM,deptno)-->
+<!--        values(#{empno},#{ename},#{job},#{mgr},#{hiredate},#{sal},#{COMM},#{deptno});-->
+<!--    </insert>-->
+<!--    <update id="update">-->
+<!--        update emp-->
+<!--        <set>-->
+<!--            <if test="ename!=null and ename!=''">-->
+<!--                ename = #{ename},-->
+<!--            </if>-->
+<!--            <if test="job!=null and job!=''">-->
+<!--                job = #{job},-->
+<!--            </if>-->
+<!--            <if test="mgr!=null">-->
+<!--                mgr = #{mgr},-->
+<!--            </if>-->
+<!--            <if test="hiredate!=null">-->
+<!--                hiredate = #{hiredate},-->
+<!--            </if>-->
+<!--            <if test="sal!=null">-->
+<!--                sal = #{sal},-->
+<!--            </if>-->
+<!--            <if test="deptno!=null">-->
+<!--                deptno = #{deptno}-->
+<!--            </if>-->
+<!--        </set>-->
+<!--        where empno = #{empno}-->
+<!--    </update>-->
+
+<!--    <delete id="deleteById">-->
+<!--        delete from emp-->
+<!--        where empno = #{empno}-->
+<!--    </delete>-->
+
+    <!--批量删除-->
+    <!--
+    mybatis会将数组参数，封装为一个Map集合。
+        *默认: array = 数组
+        *使用param注解改变map集合的默认key的名称
+    -->
+<!--    <delete id="deleteByIds">-->
+<!--        delete from emp where empno in-->
+<!--        <foreach collection="empnos" item="empno" separator="," open="(" close=")">-->
+<!--            #{empno}-->
+<!--        </foreach>-->
+<!--    </delete>-->
+</mapper>
+

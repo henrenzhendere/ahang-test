@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--sql映射文件-->
+<!--名称空间-->
+<mapper namespace="com.hang.mapper.UserMapper">
+    <resultMap id="userResultMap" type="User">
+        <result column="user_name" property="userName"/>
+        <result column="user_id" property="userId"/>
+        <result column="charge_id" property="chargeId"/>
+
+    </resultMap>
+
+
+    <select id="Login" resultMap="userResultMap">
+        select * from user where user_name =#{userName}
+    </select>
+</mapper>

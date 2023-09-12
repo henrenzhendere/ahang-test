@@ -1,0 +1,81 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/tx
+       http://www.springframework.org/schema/tx/spring-tx.xsd
+       http://www.springframework.org/schema/aop
+       https://www.springframework.org/schema/aop/spring-aop.xsd
+">
+
+    <context:component-scan base-package="com.hang.service"/>
+
+    <context:property-placeholder location="classpath:jdbc.properties"/>
+
+
+    <!-- 配置数据源 改成自己的ip 等-->
+    <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
+        <!-- 基本属性 url、user、password -->
+        <property name="driverClassName" value="${jdbc.driver}" />
+        <property name="url" value="${jdbc.url}" />
+        <property name="username" value="${jdbc.username}" />
+        <property name="password" value="${jdbc.password}" />
+
+        <!-- 配置初始化大小、最小、最大 -->
+        <property name="maxActive" value="20" />
+        <property name="initialSize" value="1" />
+        <property name="minIdle" value="1" />
+        <!-- 配置获取连接等待超时的时间 -->
+        <property name="maxWait" value="60000" />
+
+
+    </bean>
+
+    <!-- MyBatis的SqlSessionFactory -->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <!--改成自己pojo的包名-->
+        <property name="typeAliasesPackage" value="com.hang.pojo" />
+        <property name="mapperLocations" value="classpath:com/hang/mapper/*.xml" />
+    </bean>
+    <!--配置一个可以执行批量的sqlSession-->
+<!--    <bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">-->
+<!--        <constructor-arg name="sqlSessionFactory" ref="sqlSessionFactory"></constructor-arg>-->
+<!--        <constructor-arg name="executorType" value="BATCH"></constructor-arg>-->
+<!--    </bean>-->
+
+
+    <!-- 配置MyBatis的MapperScannerConfigurer -->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <!--改成自己dao的包名-->
+        <property name="basePackage" value="com.hang.mapper" />
+    </bean>
+
+    <!-- 配置事务管理器 -->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource" />
+    </bean>
+
+    <tx:annotation-driven/>
+
+    <!--开启基于注解的事物，使用xml配置形式的事务（主要式）-->
+    <aop:config>
+        <aop:pointcut id="txPoint" expression="execution(* com.hang.service..*(..))"/>
+        <!--配置事务增强-->
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="txPoint"/>
+    </aop:config>
+    <!--配置事务增强，事务如何切入-->
+    <tx:advice id="txAdvice">
+        <tx:attributes>
+            <!--所有方法都是事务方法-->
+<!--            <tx:method name="*"/>-->
+            <!--以get开始的方法-->
+            <tx:method name="get*" read-only="true"/>
+        </tx:attributes>
+    </tx:advice>
+</beans>
